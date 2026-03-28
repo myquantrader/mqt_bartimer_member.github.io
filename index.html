@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MQT_BarTimer Indicator - NinjaTrader 8</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+      line-height:1.6;
+      color:#e0e0e0;
+      background:#0a0a0a;
+    }
+    .container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+    /* Header */
+    header{
+      background:#000;
+      padding:18px 0;
+      border-bottom:2px solid #00ff00;
+      position:sticky;
+      top:0;
+      z-index:100;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-height:56px;
+    }
+    .brand img{
+      height:38px;
+      width:auto;
+      object-fit:contain;
+      display:block;
+    }
+    .brand h1{
+      color:#00ff00;
+      font-size:1.5rem;
+      line-height:1.2;
+      letter-spacing:.2px;
+    }
+
+    /* Hero */
+    .hero{
+      background:linear-gradient(135deg,#000 0%,#1a1a1a 100%);
+      padding:80px 0;
+      text-align:center;
+      border-bottom:3px solid #00ff00;
+    }
+    .hero h2{
+      font-size:2.8rem;
+      color:#00ff00;
+      margin-bottom:18px;
+      text-shadow:0 0 20px rgba(0,255,0,.5);
+    }
+    .hero p{
+      font-size:1.25rem;
+      color:#b0b0b0;
+      margin:0 auto 28px auto;
+      max-width:980px;
+    }
+    .cta-button{
+      display:inline-block;
+      background:#00ff00;
+      color:#000;
+      padding:15px 40px;
+      text-decoration:none;
+      border-radius:5px;
+      font-weight:800;
+      font-size:1.05rem;
+      transition:all .3s;
+      border:2px solid #00ff00;
+    }
+    .cta-button:hover{
+      background:#000;
+      color:#00ff00;
+      transform:translateY(-2px);
+      box-shadow:0 5px 20px rgba(0,255,0,.4);
+    }
+
+    /* Sections */
+    .section-title{
+      text-align:center;
+      font-size:2.2rem;
+      color:#00ff00;
+      margin-bottom:50px;
+      text-transform:uppercase;
+      letter-spacing:2px;
+    }
+
+    /* Features */
+    .features{padding:60px 0;background:#0f0f0f}
+    .feature-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+      gap:30px;
+    }
+    .feature-card{
+      background:#1a1a1a;
+      padding:30px;
+      border-radius:8px;
+      border:1px solid #333;
+      transition:all .3s;
+    }
+    .feature-card:hover{
+      border-color:#00ff00;
+      box-shadow:0 5px 20px rgba(0,255,0,.2);
+      transform:translateY(-5px);
+    }
+    .feature-card h3{color:#00ff00;margin-bottom:15px;font-size:1.35rem}
+    .feature-card p{color:#b0b0b0;line-height:1.8}
+    code{color:#b8ffb8}
+
+    /* Screenshots */
+    .screenshots{padding:60px 0;background:#000}
+    .screenshot-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(420px,1fr));
+      gap:30px;
+      margin-top:40px;
+    }
+    .screenshot-item{
+      background:#1a1a1a;
+      padding:20px;
+      border-radius:8px;
+      border:1px solid #333;
+      transition:all .3s;
+    }
+    .screenshot-item:hover{
+      border-color:#00ff00;
+      box-shadow:0 5px 20px rgba(0,255,0,.3);
+    }
+    .screenshot-item img{
+      width:100%;
+      border-radius:6px;
+      margin-bottom:14px;
+      display:block;
+    }
+    .screenshot-item h3{color:#00ff00;text-align:center;font-size:1.15rem}
+    .screenshot-item p{color:#9a9a9a;text-align:center;margin-top:6px;font-size:.95rem}
+
+    /* How It Works */
+    .how-it-works{padding:60px 0;background:#0f0f0f}
+    .steps{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:30px;
+      margin-top:40px;
+    }
+    .step{
+      background:#1a1a1a;
+      padding:30px;
+      border-radius:8px;
+      border-left:4px solid #00ff00;
+      transition:all .3s;
+    }
+    .step:hover{background:#222;transform:translateX(5px)}
+    .step-number{
+      display:inline-block;
+      background:#00ff00;
+      color:#000;
+      width:40px;height:40px;
+      border-radius:50%;
+      text-align:center;
+      line-height:40px;
+      font-weight:800;
+      font-size:1.2rem;
+      margin-bottom:15px;
+    }
+    .step h3{color:#00ff00;margin-bottom:10px}
+    .step p{color:#b0b0b0}
+
+    /* Settings */
+    .settings{padding:60px 0;background:#000}
+    .settings-table{
+      width:100%;
+      margin-top:30px;
+      border-collapse:collapse;
+      background:#1a1a1a;
+      border-radius:8px;
+      overflow:hidden;
+    }
+    .settings-table th{
+      background:#00ff00;
+      color:#000;
+      padding:15px;
+      text-align:left;
+      font-weight:800;
+    }
+    .settings-table td{
+      padding:15px;
+      border-bottom:1px solid #333;
+      color:#b0b0b0;
+      vertical-align:top;
+    }
+    .settings-table tr:hover{background:#222}
+
+    /* FAQ */
+    .faq{padding:60px 0;background:#0f0f0f}
+    .faq-item{
+      background:#1a1a1a;
+      padding:25px;
+      margin-bottom:20px;
+      border-radius:8px;
+      border-left:4px solid #00ff00;
+    }
+    .faq-item h3{color:#00ff00;margin-bottom:10px;font-size:1.15rem}
+    .faq-item p{color:#b0b0b0;line-height:1.8}
+
+    /* Footer */
+    footer{
+      background:#000;
+      padding:40px 0;
+      text-align:center;
+      border-top:2px solid #00ff00;
+    }
+    footer p{color:#666;margin-bottom:10px}
+    footer a{color:#00ff00;text-decoration:none}
+    footer a:hover{text-decoration:underline}
+
+    /* Responsive */
+    @media (max-width:768px){
+      .hero h2{font-size:2rem}
+      .hero p{font-size:1.1rem}
+      .screenshot-grid{grid-template-columns:1fr}
+      .settings-table{font-size:.92rem}
+      .brand img{height:34px}
+      .brand h1{font-size:1.35rem}
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="brand">
+        <img src="https://cdn.abacus.ai/images/e502179e-72c0-4cfb-83fc-d6af291d8dcf.png" alt="Logo" />
+        <h1>MQT_BarTimer</h1>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <h2>Clean Bar Countdown Timer — With Flashing Thresholds, Drag & Drop, and Sound Alerts</h2>
+      <p>
+        MQT_BarTimer displays a large “Time remaining” countdown for intraday time-based charts.
+        Configure yellow/red thresholds, flashing speed, drag-and-drop placement, and optional sound alerts
+        (including multi-sound modes like First/Random/RoundRobin). Perfect for scalpers and active traders
+        who need bar timing at a glance.
+      </p>
+      <a class="cta-button" href="#" onclick="alert('Add your download/checkout URL here'); return false;">Download Now</a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="container">
+      <h2 class="section-title">Key Features</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Large “Time Remaining” Countdown</h3>
+          <p>
+            Displays a clear countdown message (<code>Time remaining: HH:MM:SS</code>) designed for intraday, time-based bars.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Yellow + Flashing Red Thresholds</h3>
+          <p>
+            Turn the text <strong>yellow</strong> under <code>YellowUnderSeconds</code> and <strong>flash red</strong>
+            under <code>FlashRedUnderSeconds</code> with configurable speed (<code>FlashToggleMs</code>).
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Drag & Drop Placement (Optional)</h3>
+          <p>
+            Enable <code>EnableDragDrop</code> to move the countdown anywhere on the chart and persist its position using
+            internal <code>DragX</code>/<code>DragY</code>.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Sound Alerts (Yellow + Red)</h3>
+          <p>
+            Play optional sounds when thresholds are crossed:
+            <code>EnableYellowSound</code> / <code>EnableRedSound</code>, each with its own selected file and volume.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Multi-Sound Modes</h3>
+          <p>
+            Use <code>MultiSoundMode</code> per channel:
+            <strong>First</strong>, <strong>Random</strong>, or <strong>RoundRobin</strong> using a single file plus an optional list.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Smart Sound File Dropdown (NT8.1-safe)</h3>
+          <p>
+            Dropdown merges and auto-refreshes sound files from:
+            <code>Program Files</code>, <code>Documents</code>, and an optional <code>Custom</code> folder—no restart required.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screenshots -->
+  <section class="screenshots">
+    <div class="container">
+      <h2 class="section-title">Chart Examples</h2>
+
+      <div class="screenshot-grid">
+        <div class="screenshot-item">
+          <img src="https://cdn.abacus.ai/images/a4735a79-bfc5-49cb-a361-c4b8a6bfd195.png" alt="Bar timer example showing time remaining in white" />
+          <h3>Normal Countdown (White)</h3>
+          <p>Default message while above the yellow threshold</p>
+        </div>
+
+        <div class="screenshot-item">
+          <img src="https://cdn.abacus.ai/images/58b6de8f-0816-4750-8cd4-61ce695aa321.png" alt="Bar timer example showing time remaining in yellow" />
+          <h3>Warning Countdown (Yellow)</h3>
+          <p>Turns yellow when time remaining is under your configured threshold</p>
+        </div>
+
+        <div class="screenshot-item">
+          <img src="https://cdn.abacus.ai/images/c6891a5b-3ac9-4b87-b083-90cabf292351.png" alt="Bar timer example showing time remaining flashing red" />
+          <h3>Flash Countdown (Red)</h3>
+          <p>Flashes red under the red threshold to highlight imminent bar close</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <div class="container">
+      <h2 class="section-title">How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Verify Chart Type + Connection</h3>
+          <p>
+            Works on <strong>intraday time-based</strong> bars. Displays helpful status messages if disconnected,
+            outside session hours, or waiting on real-time data.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Update Countdown via UI Timer</h3>
+          <p>
+            A dispatcher timer updates the “Time remaining” value frequently (based on your flash toggle),
+            keeping the display responsive without needing a full bar update.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Apply Color + Flash Rules</h3>
+          <p>
+            Above yellow: base text color. Under yellow: yellow. Under red: flashing red using <code>FlashToggleMs</code>.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">4</div>
+          <h3>Trigger Sound Alerts (Optional)</h3>
+          <p>
+            Sounds can fire once when thresholds are crossed and optionally repeat during the red flash window
+            using <code>RepeatRedSoundDuringFlash</code> and <code>RepeatRedIntervalMs</code>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Settings -->
+  <section class="settings">
+    <div class="container">
+      <h2 class="section-title">Indicator Settings</h2>
+      <table class="settings-table">
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Description</th>
+            <th>Default</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Visual -->
+          <tr>
+            <td><strong>TextPositionFine</strong></td>
+            <td>Default fixed text location when drag & drop is disabled (TopLeft/TopRight/BottomLeft/BottomRight).</td>
+            <td>BottomRight</td>
+          </tr>
+          <tr>
+            <td><strong>TextSize</strong></td>
+            <td>Font size for the countdown text.</td>
+            <td>16</td>
+          </tr>
+          <tr>
+            <td><strong>TextBrush</strong></td>
+            <td>Base text color (used when not yellow/red-flashing).</td>
+            <td>White</td>
+          </tr>
+          <tr>
+            <td><strong>YellowUnderSeconds</strong></td>
+            <td>Turns the countdown text yellow when remaining seconds are below this value.</td>
+            <td>30</td>
+          </tr>
+          <tr>
+            <td><strong>FlashRedUnderSeconds</strong></td>
+            <td>Starts flashing red when remaining seconds are below this value.</td>
+            <td>10</td>
+          </tr>
+          <tr>
+            <td><strong>FlashToggleMs</strong></td>
+            <td>Milliseconds per on/off toggle while flashing red. Smaller = faster flash.</td>
+            <td>250</td>
+          </tr>
+          <tr>
+            <td><strong>EnableDragDrop</strong></td>
+            <td>Allow click-and-drag placement for the countdown text.</td>
+            <td>false</td>
+          </tr>
+
+          <!-- Alerts -->
+          <tr>
+            <td><strong>EnableYellowSound</strong></td>
+            <td>Play a sound once when the countdown crosses below the yellow threshold.</td>
+            <td>false</td>
+          </tr>
+          <tr>
+            <td><strong>YellowVolumePercent</strong></td>
+            <td>Yellow sound volume (0–100). Implemented via brief system waveOut volume change.</td>
+            <td>80</td>
+          </tr>
+          <tr>
+            <td><strong>YellowSoundFile</strong></td>
+            <td>Primary yellow sound token (supports dropdown values like <code>Alert1.wav [Documents]</code>).</td>
+            <td>Alert1.wav [Documents]</td>
+          </tr>
+          <tr>
+            <td><strong>YellowSoundList</strong></td>
+            <td>Optional extra sounds (comma/semicolon/pipe separated) for multi-sound modes.</td>
+            <td>(blank)</td>
+          </tr>
+          <tr>
+            <td><strong>YellowSoundMode</strong></td>
+            <td>Multi-sound selection mode for yellow: First / Random / RoundRobin.</td>
+            <td>First</td>
+          </tr>
+
+          <tr>
+            <td><strong>EnableRedSound</strong></td>
+            <td>Play a sound once when the countdown crosses below the red flashing threshold.</td>
+            <td>false</td>
+          </tr>
+          <tr>
+            <td><strong>RedVolumePercent</strong></td>
+            <td>Red sound volume (0–100). Implemented via brief system waveOut volume change.</td>
+            <td>100</td>
+          </tr>
+          <tr>
+            <td><strong>RedSoundFile</strong></td>
+            <td>Primary red sound token (supports dropdown values like <code>Alert2.wav [Documents]</code>).</td>
+            <td>Alert2.wav [Documents]</td>
+          </tr>
+          <tr>
+            <td><strong>RedSoundList</strong></td>
+            <td>Optional extra sounds (comma/semicolon/pipe separated) for multi-sound modes.</td>
+            <td>(blank)</td>
+          </tr>
+          <tr>
+            <td><strong>RedSoundMode</strong></td>
+            <td>Multi-sound selection mode for red: First / Random / RoundRobin.</td>
+            <td>First</td>
+          </tr>
+
+          <tr>
+            <td><strong>RepeatRedSoundDuringFlash</strong></td>
+            <td>If true, repeats the red sound while time remaining is below the red threshold.</td>
+            <td>false</td>
+          </tr>
+          <tr>
+            <td><strong>RepeatRedIntervalMs</strong></td>
+            <td>Repeat interval (ms) for red sound during flash (when repeating is enabled).</td>
+            <td>500</td>
+          </tr>
+
+          <tr>
+            <td><strong>UseCustomSoundFolder</strong></td>
+            <td>If enabled, the dropdown includes your custom folder and the resolver searches it first.</td>
+            <td>false</td>
+          </tr>
+          <tr>
+            <td><strong>CustomSoundFolder</strong></td>
+            <td>Path to a folder containing <code>.wav</code> files (example: <code>C:\MySounds</code>).</td>
+            <td>(blank)</td>
+          </tr>
+
+          <tr>
+            <td><strong>PreviewYellowSound</strong></td>
+            <td>Toggle true to immediately play the configured yellow sound (auto-resets).</td>
+            <td>false</td>
+          </tr>
+          <tr>
+            <td><strong>PreviewRedSound</strong></td>
+            <td>Toggle true to immediately play the configured red sound (auto-resets).</td>
+            <td>false</td>
+          </tr>
+
+          <!-- Hidden / persisted -->
+          <tr>
+            <td><strong>DragX</strong> / <strong>DragY</strong></td>
+            <td>Persisted drag position (hidden properties used when drag & drop is enabled).</td>
+            <td>-1 / -1</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="container">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <h3>What charts does MQT_BarTimer work on?</h3>
+        <p>
+          It’s intended for <strong>intraday time-based</strong> bars. If you apply it to non-time-based bars, it will show
+          a message indicating the requirement.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Can I move the countdown text?</h3>
+        <p>
+          Yes. Enable <strong>EnableDragDrop</strong>, then click and drag the text on the chart. The position persists using
+          <strong>DragX</strong>/<strong>DragY</strong>.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>How do I change when it turns yellow or flashes red?</h3>
+        <p>
+          Use <strong>YellowUnderSeconds</strong> and <strong>FlashRedUnderSeconds</strong>. Control flash speed with
+          <strong>FlashToggleMs</strong>.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>How do sound alerts work?</h3>
+        <p>
+          Sounds can trigger once when the countdown crosses below the yellow/red thresholds. You can also repeat the red
+          sound during the flash window with <strong>RepeatRedSoundDuringFlash</strong>.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Where does the sound dropdown pull files from?</h3>
+        <p>
+          The dropdown merges <strong>Program Files</strong> sounds, <strong>Documents</strong> sounds, and an optional
+          <strong>Custom</strong> folder if enabled. It rescans when you open the dropdown (no restart needed).
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Can I rotate between multiple sounds?</h3>
+        <p>
+          Yes. Add extra files to <strong>YellowSoundList</strong> or <strong>RedSoundList</strong> and set
+          <strong>YellowSoundMode</strong> / <strong>RedSoundMode</strong> to Random or RoundRobin.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 myQuantrader.com - All Rights Reserved</p>
+      <p>For support, visit <a href="https://myquantrader.com">myQuantrader.com</a></p>
+    </div>
+  </footer>
+</body>
+</html>
